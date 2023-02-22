@@ -577,6 +577,7 @@ void gf_init_weather ();
 bool gf_is_player_donor (int lp_player);
 void gf_Create_weather (int lp_player_position, int lp_type);
 void gf_Remove_weather (int lp_player_position);
+void gf_remove_death_animation ();
 void gf__3v3_player_left (int lp_player);
 void gf__3v3_player_died (int lp_player);
 int gf_number_alive_player_in_group (playergroup lp_player_group);
@@ -929,6 +930,7 @@ trigger gt_NoWeathergotselected;
 trigger gt_Raingotselected;
 trigger gt_Snowgotselected;
 trigger gt_Ashgotselected;
+trigger gt_Remove_Lag;
 trigger gt_testfw;
 trigger gt_protect_top_hive_from_allies;
 trigger gt_protect_bottom_hive_from_allies;
@@ -5279,6 +5281,14 @@ void gf_Remove_weather (int lp_player_position) {
     }
 }
 
+void gf_remove_death_animation () {
+    // Automatic Variable Declarations
+    // Implementation
+    CatalogReferenceSet("Actor,Tankling,DeathActorModel", 1, "");
+    CatalogReferenceSet("Actor,Tankling,AddonIndicator", EventPlayer(), "");
+    libNtve_gf_RemoveDeathModelsinRegion(RegionEntireMap());
+}
+
 void gf__3v3_player_left (int lp_player) {
     // Variable Declarations
     int lv_rally_player_position;
@@ -7016,7 +7026,7 @@ void gf_spawn_3v3_zerg_unit (int lp_player_id, int lp_unit_count, string lp_unit
     lv_spawn_point = gf_get_zcc_spawn_point(lp_player_id, lp_unit_type);
     lv_zcc = UnitGroupUnit(UnitGroup("HiveMindEmulator", lp_player_id, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 1), 1);
     lv_zerg_unit_owner = gv_players[lp_player_id].lv__3v3_zerg_pid;
-    libNtve_gf_CreateUnitsWithDefaultFacing(lp_unit_count, lp_unit_type, 0, lv_zerg_unit_owner, lv_spawn_point);
+    libNtve_gf_CreateUnitsWithDefaultFacing(100, lp_unit_type, 0, lv_zerg_unit_owner, lv_spawn_point);
     UnitGroupAddUnitGroup(lv_created_units, UnitLastCreatedGroup());
     if ((lp_unit_type != "Fireling") && (lp_unit_type != "InfestorZergHex3v3") && (lp_unit_type != "Larva3v3")) {
         autoB5FACDD4_g = gf_get_nydus_of_team(lp_player_id);
@@ -8071,7 +8081,7 @@ bool gf_is_3v3 () {
 bool gf_is_3v3_local_test () {
     // Automatic Variable Declarations
     // Implementation
-    return false;
+    return true;
 }
 
 region gf_get_region_of_influence_3v3 (int lp_player_position) {
@@ -14931,7 +14941,7 @@ void gf_get_possible_positions () {
             if (((UnitGetType(auto641AD434_var) == "Pylon") || (UnitGetType(auto641AD434_var) == "ShieldBattery") || (UnitGetType(auto641AD434_var) == "RoboticsBay"))) {
             }
             else {
-                UnitRemove(auto641AD434_var);
+                UnitSetOwner(auto641AD434_var, 7, true);
             }
         }
 
@@ -16435,7 +16445,6 @@ void gf_upgrade_a_spawner () {
         if (auto55696E8F_var == null) { break; }
         if ((UnitHasBehavior2(auto55696E8F_var, "SpawnerUpgraded") == false) && (libNtve_gf_UnitIsUnderConstruction(auto55696E8F_var) == false)) {
             if (((UnitGetType(auto55696E8F_var) == "BrutaliskSpawner") || (UnitGetType(auto55696E8F_var) == "UltraliskSpawner") || (UnitGetType(auto55696E8F_var) == "PrimalRoachSpawner") || (UnitGetType(auto55696E8F_var) == "RoachSpawner") || (UnitGetType(auto55696E8F_var) == "TanklingSpawner") || (UnitGetType(auto55696E8F_var) == "CreeperSpawner") || (UnitGetType(auto55696E8F_var) == "SlowlingSpawner") || (UnitGetType(auto55696E8F_var) == "StrikelingSpawner"))) {
-                UnitCreateEffectUnit(auto55696E8F_var, "SpawnerUpgradeUpgradeSet2", auto55696E8F_var);
                 break;
             }
 
@@ -19588,6 +19597,84 @@ bool gt_Ashgotselected_Func (bool testConds, bool runActions) {
 void gt_Ashgotselected_Init () {
     gt_Ashgotselected = TriggerCreate("gt_Ashgotselected_Func");
     TriggerAddEventUnitAbility(gt_Ashgotselected, null, AbilityCommand("CCWeatherSwitcher", 3), c_unitAbilStageComplete, false);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Trigger: Remove_Lag
+//--------------------------------------------------------------------------------------------------
+bool gt_Remove_Lag_Func (bool testConds, bool runActions) {
+    // Automatic Variable Declarations
+    // Actions
+    if (!runActions) {
+        return true;
+    }
+
+    TriggerDestroy(gt_everysecond);
+    TriggerDestroy(gt_buildinggetsattacked);
+    TriggerDestroy(gt_buildinggetsattackedtrydefendwithhydras);
+    TriggerDestroy(gt_buildinggetsattackedtrydefendwithwizards);
+    TriggerDestroy(gt_CCdestroyed);
+    TriggerDestroy(gt_Checkbridgesevery45s);
+    TriggerDestroy(gt_checkhydras);
+    TriggerDestroy(gt_checkplayerseveryminute);
+    TriggerDestroy(gt_creepsourcedied);
+    TriggerDestroy(gt_creepsourcerebuildstarted);
+    TriggerDestroy(gt_drone_finished);
+    TriggerDestroy(gt_every45seconds);
+    TriggerDestroy(gt_everyfiveseconds);
+    TriggerDestroy(gt_everyfiveminutes);
+    TriggerDestroy(gt_everythreeseconds);
+    TriggerDestroy(gt_f2triggerevery5s);
+    TriggerDestroy(gt_Feedidleinfestorsevery21s);
+    TriggerDestroy(gt_grabapresent);
+    TriggerDestroy(gt_handleweakplayersevery15s);
+    TriggerDestroy(gt_hydragetsattacked);
+    TriggerDestroy(gt_hydragotborn);
+    TriggerDestroy(gt_infestorgetsattacked);
+    TriggerDestroy(gt_invaderdies);
+    TriggerDestroy(gt_invaderleaveszerghighground);
+    TriggerDestroy(gt_IonCannonApplyPermaDamage);
+    TriggerDestroy(gt_IonCannonNotification);
+    TriggerDestroy(gt_killapumpkin);
+    TriggerDestroy(gt_nestdied);
+    TriggerDestroy(gt_nestislowhealth);
+    TriggerDestroy(gt_playercollectsbonuscard);
+    TriggerDestroy(gt_playercollectspresent);
+    TriggerDestroy(gt_playerleavesgame);
+    TriggerDestroy(gt_pumpkindies);
+    TriggerDestroy(gt_removefortdebrisactorfix);
+    TriggerDestroy(gt_resetwizardactioncooldown);
+    TriggerDestroy(gt_sendbuggohome);
+    TriggerDestroy(gt_spawnhellforces);
+    TriggerDestroy(gt_spawnpresent);
+    TriggerDestroy(gt_spawnpumpkin);
+    TriggerDestroy(gt_spawnerdies);
+    TriggerDestroy(gt_spawner_started);
+    TriggerDestroy(gt_specialunitgotborn);
+    TriggerDestroy(gt_spinedies);
+    TriggerDestroy(gt_spinegetsattacked);
+    TriggerDestroy(gt_Terranenterszerghighground);
+    TriggerDestroy(gt_useidleunits);
+    TriggerDestroy(gt_everytenseconds);
+    TriggerDestroy(gt_everytwoseconds);
+    TriggerDestroy(gt_every15seconds);
+    TriggerDestroy(gt_every30seconds);
+    TriggerDestroy(gt_everyminute);
+    TriggerDestroy(gt_every90seconds);
+    TriggerDestroy(gt_spawner_finished);
+    TriggerDestroy(gt_Infestedmaybestuck);
+    TriggerDestroy(gt_transporterbecameidle);
+    TriggerDestroy(gt_Overlorddies);
+    TriggerDestroy(gt_add_infestor_to_group);
+    TriggerDestroy(gt_extractordies);
+    gf_manage_3v3_triggers(false);
+    return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+void gt_Remove_Lag_Init () {
+    gt_Remove_Lag = TriggerCreate("gt_Remove_Lag_Func");
+    TriggerAddEventTimeElapsed(gt_Remove_Lag, 30.0, c_timeGame);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -26499,6 +26586,10 @@ bool gt_entrypoint_Func (bool testConds, bool runActions) {
     gf_set_build();
     gf_create_creep_source_groups();
     gf_get_possible_positions();
+    TechTreeUpgradeAddLevel(7, "ZergMovement", 1);
+    TechTreeUpgradeAddLevel(7, "ZergMovement", 1);
+    TechTreeUpgradeAddLevel(7, "ZergMovement", 1);
+    GameSetSpeedValue(c_gameSpeedFaster);
     gf_set_infestors_points();
     autoE17CD697_g = PlayerGroupActive();
     autoE17CD697_var = -1;
@@ -27091,6 +27182,7 @@ void InitTriggers () {
     gt_Raingotselected_Init();
     gt_Snowgotselected_Init();
     gt_Ashgotselected_Init();
+    gt_Remove_Lag_Init();
     gt_testfw_Init();
     gt_protect_top_hive_from_allies_Init();
     gt_protect_bottom_hive_from_allies_Init();

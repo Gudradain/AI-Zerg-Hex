@@ -9145,6 +9145,7 @@
             <Image value="Assets\Textures\Wireframe-Zerg-Locust.dds"/>
         </Wireframe>
         <WireframeShieldColor value="255,0,128,0"/>
+        <DeathActorModel value=""/>
     </CActorUnit>
     <CActorUnit id="Strikeling" parent="Broodling" unitName="Strikeling">
         <On index="0" Terms="UnitBirth.Strikeling"/>
@@ -9166,6 +9167,7 @@
         <StatusBarFlags index="Magazine" value="0"/>
         <StatusBarFlags index="Workers" value="0"/>
         <StatusBarFlags index="Custom" value="0"/>
+        <DeathActorModel value=""/>
     </CActorUnit>
     <CActorUnit id="Drone2" parent="Drone" unitName="Drone2">
         <On index="0" Terms="UnitBirth.Drone2"/>
@@ -10106,6 +10108,7 @@
         <On index="82" removed="1"/>
         <On index="83" removed="1"/>
         <HighlightTooltip value="Unit/Name/Slowling"/>
+        <DeathActorModel value=""/>
     </CActorUnit>
     <CActorUnit id="MechaSlowling" parent="Zergling" unitName="MechaSlowling">
         <On index="0" Terms="UnitBirth.MechaSlowling"/>
