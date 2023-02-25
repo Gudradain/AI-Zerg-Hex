@@ -907,6 +907,8 @@ trigger gt_money;
 trigger gt_resetelo;
 trigger gt_reveal;
 trigger gt_italis;
+trigger gt_elite;
+trigger gt_energy;
 trigger gt_inf;
 trigger gt_cheat;
 trigger gt_disabletutorialquestsinthisgame;
@@ -930,7 +932,6 @@ trigger gt_NoWeathergotselected;
 trigger gt_Raingotselected;
 trigger gt_Snowgotselected;
 trigger gt_Ashgotselected;
-trigger gt_Remove_Lag;
 trigger gt_testfw;
 trigger gt_protect_top_hive_from_allies;
 trigger gt_protect_bottom_hive_from_allies;
@@ -18398,6 +18399,63 @@ void gt_italis_Init () {
 }
 
 //--------------------------------------------------------------------------------------------------
+// Trigger: -elite
+//--------------------------------------------------------------------------------------------------
+bool gt_elite_Func (bool testConds, bool runActions) {
+    // Automatic Variable Declarations
+    // Actions
+    if (!runActions) {
+        return true;
+    }
+
+    if ((gv_practice_mode == true)) {
+        libNtve_gf_CreateUnitsWithDefaultFacing(20, "EliteMarine", 0, EventPlayer(), PointFromName(("Zerg Rally " + IntToString(gv_players[EventPlayer()].lv_position))));
+    }
+
+    return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+void gt_elite_Init () {
+    gt_elite = TriggerCreate("gt_elite_Func");
+    TriggerAddEventChatMessage(gt_elite, c_playerAny, "-elite", true);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Trigger: -energy
+//--------------------------------------------------------------------------------------------------
+bool gt_energy_Func (bool testConds, bool runActions) {
+    // Automatic Variable Declarations
+    unitgroup auto2DFC506C_g;
+    int auto2DFC506C_u;
+    unit auto2DFC506C_var;
+
+    // Actions
+    if (!runActions) {
+        return true;
+    }
+
+    if ((gv_practice_mode == true)) {
+        auto2DFC506C_g = UnitGroup(null, EventPlayer(), RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+        auto2DFC506C_u = UnitGroupCount(auto2DFC506C_g, c_unitCountAll);
+        for (;; auto2DFC506C_u -= 1) {
+            auto2DFC506C_var = UnitGroupUnitFromEnd(auto2DFC506C_g, auto2DFC506C_u);
+            if (auto2DFC506C_var == null) { break; }
+            UnitSetPropertyFixed(auto2DFC506C_var, c_unitPropEnergyRegen, 100.0);
+            UnitSetPropertyFixed(auto2DFC506C_var, c_unitPropEnergyPercent, 100.0);
+        }
+    }
+
+    return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+void gt_energy_Init () {
+    gt_energy = TriggerCreate("gt_energy_Func");
+    TriggerAddEventChatMessage(gt_energy, c_playerAny, "-elite", true);
+}
+
+//--------------------------------------------------------------------------------------------------
 // Trigger: -inf
 //--------------------------------------------------------------------------------------------------
 bool gt_inf_Func (bool testConds, bool runActions) {
@@ -19597,84 +19655,6 @@ bool gt_Ashgotselected_Func (bool testConds, bool runActions) {
 void gt_Ashgotselected_Init () {
     gt_Ashgotselected = TriggerCreate("gt_Ashgotselected_Func");
     TriggerAddEventUnitAbility(gt_Ashgotselected, null, AbilityCommand("CCWeatherSwitcher", 3), c_unitAbilStageComplete, false);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Trigger: Remove_Lag
-//--------------------------------------------------------------------------------------------------
-bool gt_Remove_Lag_Func (bool testConds, bool runActions) {
-    // Automatic Variable Declarations
-    // Actions
-    if (!runActions) {
-        return true;
-    }
-
-    TriggerDestroy(gt_everysecond);
-    TriggerDestroy(gt_buildinggetsattacked);
-    TriggerDestroy(gt_buildinggetsattackedtrydefendwithhydras);
-    TriggerDestroy(gt_buildinggetsattackedtrydefendwithwizards);
-    TriggerDestroy(gt_CCdestroyed);
-    TriggerDestroy(gt_Checkbridgesevery45s);
-    TriggerDestroy(gt_checkhydras);
-    TriggerDestroy(gt_checkplayerseveryminute);
-    TriggerDestroy(gt_creepsourcedied);
-    TriggerDestroy(gt_creepsourcerebuildstarted);
-    TriggerDestroy(gt_drone_finished);
-    TriggerDestroy(gt_every45seconds);
-    TriggerDestroy(gt_everyfiveseconds);
-    TriggerDestroy(gt_everyfiveminutes);
-    TriggerDestroy(gt_everythreeseconds);
-    TriggerDestroy(gt_f2triggerevery5s);
-    TriggerDestroy(gt_Feedidleinfestorsevery21s);
-    TriggerDestroy(gt_grabapresent);
-    TriggerDestroy(gt_handleweakplayersevery15s);
-    TriggerDestroy(gt_hydragetsattacked);
-    TriggerDestroy(gt_hydragotborn);
-    TriggerDestroy(gt_infestorgetsattacked);
-    TriggerDestroy(gt_invaderdies);
-    TriggerDestroy(gt_invaderleaveszerghighground);
-    TriggerDestroy(gt_IonCannonApplyPermaDamage);
-    TriggerDestroy(gt_IonCannonNotification);
-    TriggerDestroy(gt_killapumpkin);
-    TriggerDestroy(gt_nestdied);
-    TriggerDestroy(gt_nestislowhealth);
-    TriggerDestroy(gt_playercollectsbonuscard);
-    TriggerDestroy(gt_playercollectspresent);
-    TriggerDestroy(gt_playerleavesgame);
-    TriggerDestroy(gt_pumpkindies);
-    TriggerDestroy(gt_removefortdebrisactorfix);
-    TriggerDestroy(gt_resetwizardactioncooldown);
-    TriggerDestroy(gt_sendbuggohome);
-    TriggerDestroy(gt_spawnhellforces);
-    TriggerDestroy(gt_spawnpresent);
-    TriggerDestroy(gt_spawnpumpkin);
-    TriggerDestroy(gt_spawnerdies);
-    TriggerDestroy(gt_spawner_started);
-    TriggerDestroy(gt_specialunitgotborn);
-    TriggerDestroy(gt_spinedies);
-    TriggerDestroy(gt_spinegetsattacked);
-    TriggerDestroy(gt_Terranenterszerghighground);
-    TriggerDestroy(gt_useidleunits);
-    TriggerDestroy(gt_everytenseconds);
-    TriggerDestroy(gt_everytwoseconds);
-    TriggerDestroy(gt_every15seconds);
-    TriggerDestroy(gt_every30seconds);
-    TriggerDestroy(gt_everyminute);
-    TriggerDestroy(gt_every90seconds);
-    TriggerDestroy(gt_spawner_finished);
-    TriggerDestroy(gt_Infestedmaybestuck);
-    TriggerDestroy(gt_transporterbecameidle);
-    TriggerDestroy(gt_Overlorddies);
-    TriggerDestroy(gt_add_infestor_to_group);
-    TriggerDestroy(gt_extractordies);
-    gf_manage_3v3_triggers(false);
-    return true;
-}
-
-//--------------------------------------------------------------------------------------------------
-void gt_Remove_Lag_Init () {
-    gt_Remove_Lag = TriggerCreate("gt_Remove_Lag_Func");
-    TriggerAddEventTimeElapsed(gt_Remove_Lag, 30.0, c_timeGame);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -27159,6 +27139,8 @@ void InitTriggers () {
     gt_resetelo_Init();
     gt_reveal_Init();
     gt_italis_Init();
+    gt_elite_Init();
+    gt_energy_Init();
     gt_inf_Init();
     gt_cheat_Init();
     gt_disabletutorialquestsinthisgame_Init();
@@ -27182,7 +27164,6 @@ void InitTriggers () {
     gt_Raingotselected_Init();
     gt_Snowgotselected_Init();
     gt_Ashgotselected_Init();
-    gt_Remove_Lag_Init();
     gt_testfw_Init();
     gt_protect_top_hive_from_allies_Init();
     gt_protect_bottom_hive_from_allies_Init();

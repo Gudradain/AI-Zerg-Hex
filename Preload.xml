@@ -186,6 +186,7 @@
 <Unit id="Fireling"/>
 <Unit id="Marine2"/>
 <Unit id="VeteranMarine"/>
+<Unit id="EliteMarine"/>
 <Unit id="ShockTrooper"/>
 <Unit id="Reaper2"/>
 <Unit id="FirebatZergHex"/>
